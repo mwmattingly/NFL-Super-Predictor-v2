@@ -18,8 +18,7 @@ st.title("🏈 NFL Simulation Accuracy")
 try:
     conn = sql.connect(
         server_hostname=os.getenv("DATABRICKS_SERVER_HOSTNAME"),
-        http_path=os.getenv("DATABRICKS_HTTP_PATH"),
-        access_token=os.getenv("DATABRICKS_TOKEN")
+        http_path=os.getenv("DATABRICKS_HTTP_PATH")
     )
 
     query = """
