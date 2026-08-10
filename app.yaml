@@ -6,3 +6,10 @@ command:
   - "8000"
   - --server.address
   - "0.0.0.0"
+
+env:
+  - name: DATABRICKS_SERVER_HOSTNAME
+    value: "dbc-dfce96de-4b39.cloud.databricks.com"
+
+  - name: DATABRICKS_HTTP_PATH
+    value: "/sql/1.0/warehouses/dca6af6c090dc4ed"
