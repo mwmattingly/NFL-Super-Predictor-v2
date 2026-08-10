@@ -3,6 +3,11 @@ import streamlit as st
 import pandas as pd
 from databricks import sql
 
+st.write("HOST:", os.getenv("DATABRICKS_SERVER_HOSTNAME"))
+st.write("PATH:", os.getenv("DATABRICKS_HTTP_PATH"))
+st.write("TOKEN FOUND:", os.getenv("DATABRICKS_TOKEN") is not None)
+
+
 st.set_page_config(
     page_title="NFL Simulation Accuracy",
     page_icon="🏈",
