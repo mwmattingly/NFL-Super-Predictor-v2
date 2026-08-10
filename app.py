@@ -1,7 +1,5 @@
 import os
-import pandas as pd
 import streamlit as st
-from databricks import sql
 
 st.set_page_config(
     page_title="NFL Simulation Accuracy",
@@ -12,16 +10,16 @@ st.set_page_config(
 st.title("🏈 NFL Simulation Accuracy")
 
 st.write("HOST =", os.getenv("DATABRICKS_HOST"))
-st.write("CLIENT ID exists =", os.getenv("DATABRICKS_CLIENT_ID") is not None)
-st.write("CLIENT SECRET exists =", os.getenv("DATABRICKS_CLIENT_SECRET") is not None)
+st.write("CLIENT_ID exists =", os.getenv("DATABRICKS_CLIENT_ID") is not None)
+st.write("CLIENT_SECRET exists =", os.getenv("DATABRICKS_CLIENT_SECRET") is not None)
+st.write("HTTP_PATH =", os.getenv("DATABRICKS_HTTP_PATH"))
 
-conn = sql.connect(
-    server_hostname=os.getenv("DATABRICKS_HOST").replace("https://", ""),
-    http_path=os.getenv("DATABRICKS_HTTP_PATH"),
-    auth_type="oauth-m2m",
-    client_id=os.getenv("DATABRICKS_CLIENT_ID"),
-    client_secret=os.getenv("DATABRICKS_CLIENT_SECRET")
-)
+# Show a small portion of the values so we know they're populated
+host = os.getenv("DATABRICKS_HOST")
+client_id = os.getenv("DATABRICKS_CLIENT_ID")
 
-import socket
-socket.setdefaulttimeout(30)
+if host:
+    st.write("Host starts with:", host[:20])
+
+if client_id:
+    st.write("Client ID starts with:", client_id[:8])
