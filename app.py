@@ -59,13 +59,49 @@ try:
         ROUND(100.0 * AVG(moneylinecorrect), 2) AS pct_correct
         FROM nfl.analytics.simulation_accuracy
         GROUP BY week
-        ORDER BY week
+        ORDER BY CAST(week AS INT)
         """
         
         df = pd.read_sql(query, conn)
         
-        st.subheader("Moneyline Prediction Accuracy by Week")
-        st.dataframe(df, use_container_width=True)
+# Overall accuracy metric
+overall_accuracy = (
+    df["correct_picks"].sum() /
+    df["games"].sum()
+) * 100
+
+st.metric(
+    label="Overall Moneyline Accuracy",
+    value=f"{overall_accuracy:.1f}%"
+)
+
+# Accuracy trend
+st.subheader("Weekly Accuracy Trend")
+
+chart_df = df.set_index("week")
+
+st.line_chart(
+    chart_df["pct_correct"],
+    use_container_width=True
+)
+
+# Detailed results
+st.subheader("Weekly Results")
+
+display_df = df.copy()
+
+display_df.columns = [
+    "Week",
+    "Games",
+    "Correct Picks",
+    "Accuracy %"
+]
+
+st.dataframe(
+    display_df,
+    use_container_width=True,
+    hide_index=True,
+)
 
 except Exception as e:
     st.error(f"Error loading data: {e}")
