@@ -51,22 +51,21 @@ try:
         http_path=http_path,
         credentials_provider=credential_provider
     ) as conn:
-
-    query = """
-    SELECT
+        query = """
+        SELECT
         week,
         COUNT(*) AS games,
         SUM(moneylinecorrect) AS correct_picks,
         ROUND(100.0 * AVG(moneylinecorrect), 2) AS pct_correct
-    FROM nfl.analytics.simulation_accuracy
-    GROUP BY week
-    ORDER BY week
-    """
-    
-    df = pd.read_sql(query, conn)
-    
-    st.subheader("Moneyline Prediction Accuracy by Week")
-    st.dataframe(df, use_container_width=True)
+        FROM nfl.analytics.simulation_accuracy
+        GROUP BY week
+        ORDER BY week
+        """
+        
+        df = pd.read_sql(query, conn)
+        
+        st.subheader("Moneyline Prediction Accuracy by Week")
+        st.dataframe(df, use_container_width=True)
 
 except Exception as e:
     st.error(f"Error loading data: {e}")
