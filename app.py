@@ -11,6 +11,8 @@ st.set_page_config(
 
 st.title("🏈 NFL Simulation Accuracy")
 
+st.write("Reached query section")
+
 try:
     conn = sql.connect(
         server_hostname=os.getenv("DATABRICKS_SERVER_HOSTNAME"),
