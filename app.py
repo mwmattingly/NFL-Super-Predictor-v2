@@ -51,57 +51,58 @@ try:
         http_path=http_path,
         credentials_provider=credential_provider
     ) as conn:
+
         query = """
         SELECT
-        week,
-        COUNT(*) AS games,
-        SUM(moneylinecorrect) AS correct_picks,
-        ROUND(100.0 * AVG(moneylinecorrect), 2) AS pct_correct
+            week,
+            COUNT(*) AS games,
+            SUM(moneylinecorrect) AS correct_picks,
+            ROUND(100.0 * AVG(moneylinecorrect), 2) AS pct_correct
         FROM nfl.analytics.simulation_accuracy
         GROUP BY week
         ORDER BY CAST(week AS INT)
         """
-        
+
         df = pd.read_sql(query, conn)
-        
-# Overall accuracy metric
-overall_accuracy = (
-    df["correct_picks"].sum() /
-    df["games"].sum()
-) * 100
 
-st.metric(
-    label="Overall Moneyline Accuracy",
-    value=f"{overall_accuracy:.1f}%"
-)
+    # Overall Accuracy KPI
+    overall_accuracy = (
+        df["correct_picks"].sum()
+        / df["games"].sum()
+    ) * 100
 
-# Accuracy trend
-st.subheader("Weekly Accuracy Trend")
+    st.metric(
+        label="Overall Moneyline Accuracy",
+        value=f"{overall_accuracy:.1f}%"
+    )
 
-chart_df = df.set_index("week")
+    # Weekly Accuracy Trend
+    st.subheader("Weekly Accuracy Trend")
 
-st.line_chart(
-    chart_df["pct_correct"],
-    use_container_width=True
-)
+    chart_df = df.set_index("week")
 
-# Detailed results
-st.subheader("Weekly Results")
+    st.line_chart(
+        chart_df["pct_correct"],
+        use_container_width=True
+    )
 
-display_df = df.copy()
+    # Weekly Results Table
+    st.subheader("Weekly Results")
 
-display_df.columns = [
-    "Week",
-    "Games",
-    "Correct Picks",
-    "Accuracy %"
-]
+    display_df = df.copy()
 
-st.dataframe(
-    display_df,
-    use_container_width=True,
-    hide_index=True,
-)
+    display_df.columns = [
+        "Week",
+        "Games",
+        "Correct Picks",
+        "Accuracy %"
+    ]
+
+    st.dataframe(
+        display_df,
+        use_container_width=True,
+        hide_index=True
+    )
 
 except Exception as e:
     st.error(f"Error loading data: {e}")
