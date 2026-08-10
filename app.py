@@ -14,6 +14,12 @@ st.title("🏈 NFL Simulation Accuracy")
 st.write("Reached query section")
 
 try:
+    st.write("Step 1 - importing SQL connector")
+
+    from databricks import sql
+
+    st.write("Step 2 - connector imported")
+
     conn = sql.connect(
         server_hostname=os.getenv("DATABRICKS_SERVER_HOSTNAME"),
         http_path=os.getenv("DATABRICKS_HTTP_PATH"),
@@ -22,16 +28,21 @@ try:
         client_secret=os.getenv("DATABRICKS_CLIENT_SECRET")
     )
 
-    query = """
-    SELECT *
-    FROM nfl.analytics.simulation_accuracy
-    LIMIT 1000
-    """
+    st.write("Step 3 - connected")
 
-    df = pd.read_sql(query, conn)
+    cursor = conn.cursor()
 
-    st.success(f"Retrieved {len(df):,} rows")
-    st.dataframe(df, use_container_width=True)
+    st.write("Step 4 - cursor created")
+
+    cursor.execute("SELECT COUNT(*) FROM nfl.analytics.simulation_accuracy")
+
+    st.write("Step 5 - query executed")
+
+    result = cursor.fetchall()
+
+    st.write("Step 6 - results fetched")
+
+    st.write(result)
 
 except Exception as e:
-    st.error(f"Error loading data: {e}")
+    st.error(f"ERROR: {e}")
