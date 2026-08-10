@@ -12,13 +12,29 @@ st.set_page_config(
 
 st.title("🏈 NFL Simulation Accuracy")
 
-host = os.getenv("DATABRICKS_HOST")
+server_hostname = os.getenv("DATABRICKS_HOST")
 http_path = os.getenv("DATABRICKS_HTTP_PATH")
 client_id = os.getenv("DATABRICKS_CLIENT_ID")
 client_secret = os.getenv("DATABRICKS_CLIENT_SECRET")
 
+if server_hostname:
+    server_hostname = (
+        server_hostname
+        .replace("https://", "")
+        .replace("http://", "")
+        .rstrip("/")
+    )
+
+def credential_provider():
+    config = Config(
+        host=f"https://{server_hostname}",
+        client_id=client_id,
+        client_secret=client_secret
+    )
+    return oauth_service_principal(config)
+
 try:
-    if not host:
+    if not server_hostname:
         st.error("Missing DATABRICKS_HOST")
         st.stop()
 
@@ -27,22 +43,15 @@ try:
         st.stop()
 
     if not client_id or not client_secret:
-        st.error("Missing Databricks app service principal credentials")
+        st.error("Missing Databricks app credentials")
         st.stop()
-
-    server_hostname = host.replace("https://", "").replace("http://", "").rstrip("/")
-
-    cfg = Config(
-        host=host if host.startswith("http") else f"https://{host}",
-        client_id=client_id,
-        client_secret=client_secret
-    )
 
     with sql.connect(
         server_hostname=server_hostname,
         http_path=http_path,
-        credentials_provider=oauth_service_principal(cfg)
+        credentials_provider=credential_provider
     ) as conn:
+
         query = """
         SELECT *
         FROM nfl.analytics.simulation_accuracy
