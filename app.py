@@ -8,5 +8,8 @@ st.set_page_config(
     layout="wide"
 )
 
+# Create Spark session
+spark = SparkSession.builder.getOrCreate()
+
 # Title
 st.title("🏈 NFL Week 10 Predictions")
